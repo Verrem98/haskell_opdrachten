@@ -30,7 +30,7 @@ errorString n = colour Red $ "Opgave " <> show n <> " werkt nog niet, je error w
 
 testFunc :: forall a. (Eq a, Show a) => a -> a -> Int -> IO ()
 testFunc given expected number = do
-  res <- try (evaluate $ given) :: IO (Either SomeException a)
+  res <- try (evaluate given) :: IO (Either SomeException a)
   case res of
     Left error -> do putStrLn $ errorString number
                      putStrLn $ colour Grey $ displayException error
