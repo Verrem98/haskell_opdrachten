@@ -39,11 +39,12 @@ ex1 [1,2,3]
 Als het goed is krijg je nu de som, 6, terug.
 
 Een aantal belangrijke commando's in GHCi (de REPL):
- - :r    herlaadt het bestand
- - :l    laadt een bestand (heb je met `stack repl` niet vaak nodig
- - :t    vraag het type op van een functie of constante
- - :q    quit, kan ook met CTRL-D
-Er zijn nog veel meer commando's mogelijk, maar dit is voor nu genoeg. Als je een : typt en dan op TAB drukt krijg je een lijstje. In het algemeen kun je TAB gebruiken om GHCi je huidige woord aan te laten vullen.
+ - `:r`    herlaadt het bestand
+ - `:l`    laadt een bestand (heb je met `stack repl` niet vaak nodig)
+ - `:t`    vraag het type op van een functie of constante
+ - `:q`    quit, kan ook met CTRL-D
+
+Er zijn nog veel meer commando's mogelijk, maar dit is voor nu genoeg. Als je een `:` typt en dan op TAB drukt krijg je een lijstje. In het algemeen kun je TAB gebruiken om GHCi je huidige woord aan te laten vullen.
 
 Kijk in GHCi nog even naar het type van `ex1`, `[1,2,3]` en `ex1 [1,2,3]`:
 
