@@ -19,39 +19,50 @@ module Lib
     ( ex1, ex2, ex3, ex4, ex5, ex6, ex7
     ) where
 
--- TODO: Schrijf en documenteer de functie ex1, die de som van een lijst getallen berekent.
--- Voorbeeld: ex1 [3,1,4,1,5] ~> 14
+-- | The 'ex1' function calculates the sum of a list of integers
+-- it takes 1 argument, of type '[Int]'. It returns type 'Int'
 ex1 :: [Int] -> Int
-ex1 = undefined
+ex1 (x:xs) = x + ex1 xs
+ex1 [] = 0
 
--- TODO: Schrijf en documenteer de functie ex2, die alle elementen van een lijst met 1 ophoogt.
--- Voorbeeld: ex2 [3,1,4,1,5] ~> [4,2,5,2,6]
+
+-- | The 'ex2' function increases every integer in a list of integers by one
+-- it takes 1 argument, of type '[Int]'. It returns type '[Int]'
 ex2 :: [Int] -> [Int]
-ex2 = undefined
+ex2 (x:xs) = x+1 : ex2 xs
+ex2 [] = []
 
--- TODO: Schrijf en documenteer de functie ex3, die alle elementen van een lijst met -1 vermenigvuldigt.
--- Voorbeeld: ex3 [3,1,4,1,5] ~> [-3,-1,-4,-1,-5]
+
+-- | The 'ex3' function multiplies every integer in a list of integers by one
+-- it takes 1 argument, of type '[Int]'. It returns type '[Int]'
 ex3 :: [Int] -> [Int]
-ex3 = undefined
+ex3 (x:xs) = -x : ex3 xs
+ex3 [] = []
 
--- TODO: Schrijf en documenteer de functie ex4, die twee lijsten aan elkaar plakt.
--- Voorbeeld: ex4 [3,1,4] [1,5] ~> [3,1,4,1,5]
--- Maak hierbij geen gebruik van de standaard-functies, maar los het probleem zelf met (expliciete) recursie op. 
--- Hint: je hoeft maar door een van beide lijsten heen te lopen met recursie.
+
+-- | The 'ex4' function concatenates 2 lists of integers
+-- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]'
 ex4 :: [Int] -> [Int] -> [Int]
-ex4 = undefined
+ex4 x[] = x
+ex4 []y = y
+ex4 (x:xs) (y:ys) = x: ex4 xs (y:ys)
 
--- TODO: Schrijf en documenteer een functie, ex5, die twee lijsten van gelijke lengte paarsgewijs bij elkaar optelt.
--- Voorbeeld: ex5 [3,1,4] [1,5,9] ~> [4,6,13]
+
+-- | The 'ex5' function looks at the values of two lists of integers (equal in length), and returns a list made up of the sums of said values at corresponding indices
+-- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]'
 ex5 :: [Int] -> [Int] -> [Int]
-ex5 = undefined
+ex5 (x:xs) (y:ys) = x+y: ex5 xs ys
+ex5 [][] = []
 
--- TODO: Schrijf en documenteer een functie, ex6, die twee lijsten van gelijke lengte paarsgewijs met elkaar vermenigvuldigt.
--- Voorbeeld: ex6 [3,1,4] [1,5,9] ~> [3,5,36] 
+
+-- | The 'ex6' function looks at the values of two lists of integers (equal in length), and returns a list made up of the product of said values at corresponding indices
+-- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]'
 ex6 :: [Int] -> [Int] -> [Int]
-ex6 = undefined
+ex6 (x:xs) (y:ys) = x*y: ex6 xs ys
+ex6 [][] = []
 
--- TODO: Schrijf en documenteer een functie, ex7, die de functies ex1 en ex6 combineert tot een functie die het inwendig product uitrekent.
--- Voorbeeld: ex7 [3,1,4] [1,5,9] geeft 3*1 + 1*5 + 4*9 = 44 terug als resultaat.
+
+-- | The 'ex7' function calculates the dot product of 2 lists, it uses both the ex1 and ex6 functions to do so
+-- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type 'Int'
 ex7 :: [Int] -> [Int] -> Int
-ex7 = undefined
+ex7 x y = ex1 (ex6 x y)
