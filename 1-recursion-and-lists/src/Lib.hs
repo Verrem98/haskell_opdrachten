@@ -55,7 +55,7 @@ ex5 (x:xs) (y:ys) = x+y: ex5 xs ys
 ex5 [][] = []
 
 
--- | The 'ex6' function looks at the values of two lists of integers (equal in length), and returns a list made up of the product of said values at corresponding indices
+-- | The 'ex6' function looks at the values of two lists of integers (equal in length), and returns a list made up of the products of said values at corresponding indices
 -- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]'
 ex6 :: [Int] -> [Int] -> [Int]
 ex6 (x:xs) (y:ys) = x*y: ex6 xs ys
