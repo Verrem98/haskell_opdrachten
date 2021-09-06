@@ -33,7 +33,7 @@ ex2 (x:xs) = x+1 : ex2 xs
 ex2 [] = []
 
 
--- | The 'ex3' function multiplies every integer in a list of integers by one
+-- | The 'ex3' function multiplies every integer in a list of integers by minus one
 -- it takes 1 argument, of type '[Int]'. It returns type '[Int]'
 ex3 :: [Int] -> [Int]
 ex3 (x:xs) = -x : ex3 xs
