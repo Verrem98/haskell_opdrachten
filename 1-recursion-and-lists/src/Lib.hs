@@ -62,7 +62,7 @@ ex6 (x:xs) (y:ys) = x*y: ex6 xs ys
 ex6 [][] = []
 
 
--- | The 'ex7' function calculates the dot product of 2 lists, it uses both the ex1 and ex6 functions to do so
+-- | The 'ex7' function calculates the dot product of 2 lists of integers, it uses both the ex1 and ex6 functions to do so
 -- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type 'Int'
 ex7 :: [Int] -> [Int] -> Int
 ex7 x y = ex1 (ex6 x y)
