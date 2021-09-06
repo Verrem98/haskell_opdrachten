@@ -48,7 +48,7 @@ ex4 []y = y
 ex4 (x:xs) (y:ys) = x: ex4 xs (y:ys)
 
 
--- | The 'ex5' function looks at the values of two lists of integers (equal in length), and returns a list made up of the sums of said values at corresponding indices
+-- | The 'ex5' function looks at the values of two lists of integers (equal in length), and returns a list made up of the sums of said integers at corresponding indices
 -- it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]'
 ex5 :: [Int] -> [Int] -> [Int]
 ex5 (x:xs) (y:ys) = x+y: ex5 xs ys
