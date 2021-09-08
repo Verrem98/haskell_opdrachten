@@ -43,7 +43,6 @@ ex3 [] = []
 {-| The 'ex4' function concatenates 2 lists of integers
 it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]' -}
 ex4 :: [Int] -> [Int] -> [Int]
-ex4 x[] = x
 ex4 []y = y
 ex4 (x:xs) y = x: ex4 xs y
 
