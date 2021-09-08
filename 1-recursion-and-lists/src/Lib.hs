@@ -45,7 +45,7 @@ it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]' -}
 ex4 :: [Int] -> [Int] -> [Int]
 ex4 x[] = x
 ex4 []y = y
-ex4 (x:xs) y = x: ex4 xs (y)
+ex4 (x:xs) y = x: ex4 xs y
 
 
 {-| The 'ex5' function looks at the values of two lists of integers (equal in length),
