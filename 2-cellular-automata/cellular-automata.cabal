@@ -1,0 +1,41 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           cellular-automata
+version:        0.1.0.0
+description:    Please see the README on GitLab at <https://gitlab.com/hu-hbo-ict/ai/v2dep-opdrachten/-/blob/main/1_cellular-automata/README.md>
+author:         Brian van der Bijl
+maintainer:     brian.vanderbijl@hu.nl
+copyright:      2020 Brian van der Bijl
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_cellular_automata
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable cellular-automata-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_cellular_automata
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , cellular-automata
+  default-language: Haskell2010
