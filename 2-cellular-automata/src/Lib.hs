@@ -69,11 +69,11 @@ fromList x = FocusList x []
 -- Deze functie, die je van ons cadeau krijgt, schuift de focus één naar links op.
 -- Voorbeeld: goLeft $ FocusList [3,4,5] [2,1,0] ~> FocusList [2,3,4,5] [1,0]
 goLeft :: FocusList a -> FocusList a
-goLeft (FocusList fw (f:bw)) = FocusList (f:fw) bw
+goLeft (FocusList x (y:ys)) = FocusList (y:x) ys
 
 -- TODO: Schrijf en documenteer de functie goRight, die de focuslist een plaats naar rechts opschuift.
 goRight :: FocusList a -> FocusList a
-goRight (FocusList (f:bw) fw) = FocusList bw (f:fw)
+goRight (FocusList (x:xs) y) = FocusList xs (x:y)
 
 -- TODO: Schrijf en documenteer de functie leftMost, die de focus helemaal naar links opschuift.
 leftMost :: FocusList a -> FocusList a
@@ -81,7 +81,8 @@ leftMost (FocusList x y) = FocusList ((reverse y) ++ x) []
 
 -- TODO: Schrijf en documenteer de functie rightMost, die de focus helemaal naar rechts opschuift.
 rightMost :: FocusList a -> FocusList a
-rightMost (FocusList x y) = FocusList x (x++y)
+rightMost (FocusList x y) = FocusList [last x] ((reverse $ init x)++y)
+
 
 -- Onze functies goLeft en goRight gaan er impliciet van uit dat er links respectievelijk rechts een waarde gedefinieerd is. 
 -- De aanroep `goLeft $ fromList [1,2,3]` zal echter crashen, omdat er in een lege lijst gezocht wordt: er is niets verder naar links. 
