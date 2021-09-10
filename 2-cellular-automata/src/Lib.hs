@@ -101,11 +101,18 @@ rightMost (FocusList x y) = FocusList [last x] ((reverse $ init x)++y)
 
 -- TODO: Schrijf en documenteer de functie totalLeft, zoals hierboven beschreven.
 totalLeft :: (Eq a, Monoid a) => FocusList a -> FocusList a
-totalLeft = undefined
+totalLeft (FocusList x (y:ys)) = FocusList (y:x) ys
+totalLeft (FocusList x []) = FocusList (mempty:x) []
+
 
 -- TODO: Schrijf en documenteer de functie totalRight, zoals hierboven beschreven.
 totalRight :: (Eq a, Monoid a) => FocusList a -> FocusList a
-totalRight = undefined
+totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
+totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
+
+
+--totalRight (FocusList (x:xs) y) = if (length [xs]) > 0 then FocusList xs (x:y)
+--else FocusList (y) (x:y)
 
 
 -- ..:: Sectie 2 - Hogere-ordefuncties voor de FocusList ::..

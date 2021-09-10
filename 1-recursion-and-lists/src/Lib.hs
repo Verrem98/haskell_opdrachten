@@ -23,21 +23,21 @@ module Lib
  it takes 1 argument, of type '[Int]'. It returns type 'Int' -}
 ex1 :: [Int] -> Int
 ex1 (x:xs) = x + ex1 xs
-ex1 _ = 0
+ex1 [] = 0
 
 
 {-| The 'ex2' function increases every integer in a list of integers by one and prepends it to a new list in a recursive loop
 it takes 1 argument, of type '[Int]'. It returns type '[Int]'-}
 ex2 :: [Int] -> [Int]
 ex2 (x:xs) = x+1 : ex2 xs
-ex2 _ = []
+ex2 [] = []
 
 
 {-| The 'ex3' function multiplies every integer in a list of integers by minus one and prepends it to a new list in a recursive loop
 it takes 1 argument, of type '[Int]'. It returns type '[Int]' -}
 ex3 :: [Int] -> [Int]
 ex3 (x:xs) = -x : ex3 xs
-ex3 _ = []
+ex3 [] = []
 
 
 {-| The 'ex4' function concatenates 2 lists of integers by recursively looping through one of the lists and prepending the values to the second list
@@ -51,7 +51,7 @@ and prepends the sums of said values at corresponding indices to a new list usin
 it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]' -}
 ex5 :: [Int] -> [Int] -> [Int]
 ex5 (x:xs) (y:ys) = x+y: ex5 xs ys
-ex5 _ _ = []
+ex5 [] [] = []
 
 
 {-| The 'ex6' function looks at the values of two lists of integers (equal in length),
@@ -59,7 +59,7 @@ and prepends the products of said values at corresponding indices to a new list 
 it takes 2 arguments, of types '[Int]', '[Int]'. It returns type '[Int]' -}
 ex6 :: [Int] -> [Int] -> [Int]
 ex6 (x:xs) (y:ys) = x*y: ex6 xs ys
-ex6 _ _ = []
+ex6 [] [] = []
 
 
 {-| The 'ex7' function calculates the dot product of 2 lists of integers,
