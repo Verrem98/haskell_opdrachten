@@ -107,13 +107,10 @@ totalLeft (FocusList x []) = FocusList (mempty:x) []
 
 -- TODO: Schrijf en documenteer de functie totalRight, zoals hierboven beschreven.
 totalRight :: (Eq a, Monoid a) => FocusList a -> FocusList a
-totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
-totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
+totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x:y) else FocusList xs (x:y)
 
-
---totalRight (FocusList (x:xs) y) = if (length [xs]) > 0 then FocusList xs (x:y)
---else FocusList (y) (x:y)
-
+--totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
+--totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
 
 -- ..:: Sectie 2 - Hogere-ordefuncties voor de FocusList ::..
 
