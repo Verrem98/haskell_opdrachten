@@ -321,7 +321,8 @@ showPyramid zs = unlines $ zipWith showFocusList zs $ reverse [0..div (pred w) 2
 -- TODO: Definieer de constante `inputs` die alle 8 mogelijke contexts weergeeft: [Alive,Alive,Alive], [Alive,Alive,Dead], etc.
 -- Je mag dit met de hand uitschrijven, maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen.
 inputs :: [Context]
-inputs = [[Alive, Dead, Dead],[Dead, Alive, Dead],[Dead, Dead, Alive],[Alive, Alive, Dead] ,[Alive, Dead, Alive],[Dead, Alive, Alive],[Dead,Dead,Dead],[Alive,Alive,Alive] ]
+-- 'maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen' :)
+inputs = [[x,y,z] | x <- [Dead,Alive], y <- [Dead,Alive], z <- [Dead,Alive]]
 
 -- Deze helperfunctie evalueert met de functie (p) de waarde (x); als dit True teruggeeft, is het resultaat Just x, anders Nothing. 
 guard :: (a -> Bool) -> a -> Maybe a
