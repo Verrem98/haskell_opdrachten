@@ -16,11 +16,9 @@
 -}
 
 module Lib where
-
 import Data.Maybe (catMaybes) -- Niet gebruikt, maar deze kan van pas komen...
 import Data.List (unfoldr)
 import Data.Tuple (swap)
-
 
 -- ..:: Sectie 1: Basisoperaties op de FocusList ::..
 
@@ -110,6 +108,7 @@ totalRight :: (Eq a, Monoid a) => FocusList a -> FocusList a
 totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
 totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
 
+--Alternative:
 --totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x:y) else FocusList xs (x:y)
 
 -- ..:: Sectie 2 - Hogere-ordefuncties voor de FocusList ::..
@@ -214,7 +213,8 @@ type Rule = Context -> Cell
 safeHead :: a        -- ^ Defaultwaarde
          -> [a]      -- ^ Bronlijst
          -> a
-safeHead = undefined
+safeHead x []  = x
+safeHead x y = head y
 
 -- TODO: Schrijf en documenteer de functie takeAtLeast, die werkt als `take`, maar met een extra argument. 
 -- Als de lijst lang genoeg is werkt de functie hetzelfde als `take` en worden de eerste `n` elementen teruggegeven.
@@ -225,23 +225,39 @@ takeAtLeast :: Int   -- ^ Aantal items om te pakken
             -> a     -- ^ Defaultwaarde
             -> [a]   -- ^ Bronlijst
             -> [a]
-takeAtLeast = undefined
+takeAtLeast x y z = (take x z) ++ replicate (x - length z) y
 
 -- TODO: Schrijf en documenteer de functie context, die met behulp van takeAtLeast de context van de focus-cel in een Automaton teruggeeft. 
 -- Niet-gedefinieerde cellen zijn per definitie Dead.
 context :: Automaton -> Context
-context (FocusList x y) = undefined
+context (FocusList x y) = takeAtLeast 1 Dead y ++ takeAtLeast 2 Dead x
+
+--Bad code that still gets through the test cases:
+--context (FocusList (x:xs:xss) (y:ys)) = takeAtLeast 3 Dead ((x:xs:xss) ++ [head (takeAtLeast 3 Dead (y:ys))])
+--context (FocusList (x:xs) (y:ys:yss)) = takeAtLeast 3 Dead ((x:xs) ++ [head (takeAtLeast 3 Dead (y:ys:yss))])
+--context (FocusList x y) = takeAtLeast 3 Dead ([Dead] ++ x++ [head (takeAtLeast 3 Dead y)])
+
+--context (FocusList x y) = reverse (takeAtLeast 2 Dead (reverse x)) ++ takeAtLeast 1 Dead y
+
+
 
 -- TODO: Schrijf en documenteer de functie expand die een Automaton uitbreidt met een dode cel aan beide uiteindes. 
 -- We doen voor deze simulatie de aanname dat de "known universe" iedere ronde met 1 uitbreidt naar zowel links als rechts.
 expand :: Automaton -> Automaton
-expand (FocusList x y) = undefined
+expand (FocusList x y) = FocusList (x++[Dead]) (y++[Dead])
 
 -- TODO: Vul de functie rule30 aan met de andere 7 gevallen. 
 -- Voor bonuspunten: doe dit in zo min mogelijk regels code. De underscore _ is je vriend.
 rule30 :: Rule
-rule30 [Dead, Dead, Dead] = Dead
--- ...
+rule30 [Alive, Dead, Dead] = Alive
+rule30 [Dead, Alive, Dead] = Alive
+rule30 [Dead, Dead, Alive] = Alive
+rule30 [Alive, Alive, Dead] = Dead
+rule30 [Alive, Dead, Alive] = Dead
+rule30 [Dead, Alive, Alive] = Alive
+rule30 [_, _, _] = Dead
+
+
 
 -- Je kan je rule-30 functie in GHCi (voer `stack ghci` uit) testen met het volgende commando:
 -- putStrLn . showPyramid . iterateRule rule30 15 $ start
@@ -305,7 +321,7 @@ showPyramid zs = unlines $ zipWith showFocusList zs $ reverse [0..div (pred w) 2
 -- TODO: Definieer de constante `inputs` die alle 8 mogelijke contexts weergeeft: [Alive,Alive,Alive], [Alive,Alive,Dead], etc.
 -- Je mag dit met de hand uitschrijven, maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen.
 inputs :: [Context]
-inputs = undefined
+inputs = [[Alive, Dead, Dead],[Dead, Alive, Dead],[Dead, Dead, Alive],[Alive, Alive, Dead] ,[Alive, Dead, Alive],[Dead, Alive, Alive],[Dead,Dead,Dead],[Alive,Alive,Alive] ]
 
 -- Deze helperfunctie evalueert met de functie (p) de waarde (x); als dit True teruggeeft, is het resultaat Just x, anders Nothing. 
 guard :: (a -> Bool) -> a -> Maybe a
@@ -326,9 +342,11 @@ binary = map toEnum . reverse . take 8 . (++ repeat 0)
 -- die (qua positie) overeenkomen met een True.
 -- Je kunt hiervoor zipWith en Maybe gebruiken (check `catMaybes` in Data.Maybe) of de recursie met de hand uitvoeren.
 mask :: [Bool] -> [a] -> [a]
-mask x y = undefined
+mask (x:xs) (y:ys) = if fromEnum x == 1 then y: mask xs ys else mask xs ys
+mask _ _ = []
 
--- TODO: Schrijf en documenteer de functie rule, die elk getal kan omzetten naar de bijbehorende regel. 
+
+-- TODO: Schrijf en documenteer de functie rule, die elk getal kan omzetten naar de bijbehorende regel.
 -- De Int staat hierbij voor het nummer van de regel; de Context `input` is waarnaar je kijkt om te zien of het resultaat
 -- met de gevraagde regel Dead or Alive is. 
 -- Tips: - Denk eraan dat het type Rule een shorthand is voor een functie-type, dus dat je met 2 argumenten te maken hebt. 
