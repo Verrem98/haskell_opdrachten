@@ -107,10 +107,10 @@ totalLeft (FocusList x []) = FocusList (mempty:x) []
 
 -- TODO: Schrijf en documenteer de functie totalRight, zoals hierboven beschreven.
 totalRight :: (Eq a, Monoid a) => FocusList a -> FocusList a
-totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x:y) else FocusList xs (x:y)
+totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
+totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
 
---totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
---totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
+--totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x:y) else FocusList xs (x:y)
 
 -- ..:: Sectie 2 - Hogere-ordefuncties voor de FocusList ::..
 
@@ -121,7 +121,7 @@ totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x
 -- Deze werkt zoals je zou verwachten: de functie wordt op ieder element toegepast, voor, op en na de focus. 
 -- Je mag hier gewoon map voor gebruiken.
 mapFocusList :: (a -> b) -> FocusList a -> FocusList b
-mapFocusList = undefined
+mapFocusList f (FocusList x y) = FocusList (map f x) (map f y)
 
 -- TODO: Schrijf en documenteer de functie zipFocusListWith.
 -- Deze functie zorgt ervoor dat ieder paar elementen uit de FocusLists als volgt met elkaar gecombineerd wordt:
@@ -137,7 +137,7 @@ mapFocusList = undefined
 -- Dit laatste is net als bij de gewone zipWith, die je hier ook voor mag gebruiken.
 
 zipFocusListWith :: (a -> b -> c) -> FocusList a -> FocusList b -> FocusList c
-zipFocusListWith = undefined
+zipFocusListWith f (FocusList x y) (FocusList q z) = FocusList (zipWith f x q) (zipWith f y z)
 
 -- TODO: Schrijf en documenteer de functie foldFocusList.
 -- Het folden van een FocusList vergt de meeste toelichting: waar we met een normale lijst met een left fold en een 
@@ -161,7 +161,8 @@ zipFocusListWith = undefined
 -- Let op: de tweede lijst van de FocusList kan leeg zijn! (De eerste technisch gezien ook, maar dan heb je geen geldige FocusList.)
 
 foldFocusList :: (a -> a -> a) -> FocusList a -> a
-foldFocusList = undefined
+foldFocusList f (FocusList x []) = (foldl1 f x)
+foldFocusList f (FocusList x y) = f (foldl1 f y) (foldl1 f x)
 
 -- Testfunctie voor foldFocusList (geeft True als alles klopt, False als er één of meer niet kloppen)
 testFold :: Bool
