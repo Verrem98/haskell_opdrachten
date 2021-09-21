@@ -321,8 +321,8 @@ showPyramid zs = unlines $ zipWith showFocusList zs $ reverse [0..div (pred w) 2
 -- TODO: Definieer de constante `inputs` die alle 8 mogelijke contexts weergeeft: [Alive,Alive,Alive], [Alive,Alive,Dead], etc.
 -- Je mag dit met de hand uitschrijven, maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen.
 inputs :: [Context]
--- 'maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen' :)
-inputs = [[x,y,z] | x <- [Dead,Alive], y <- [Dead,Alive], z <- [Dead,Alive]]
+-- 'maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen'
+inputs = [[x,y,z] | x <- [Alive,Dead], y <- [Alive,Dead], z <- [Alive,Dead]]
 
 -- Deze helperfunctie evalueert met de functie (p) de waarde (x); als dit True teruggeeft, is het resultaat Just x, anders Nothing. 
 guard :: (a -> Bool) -> a -> Maybe a
@@ -353,7 +353,9 @@ mask _ _ = []
 -- Tips: - Denk eraan dat het type Rule een shorthand is voor een functie-type, dus dat je met 2 argumenten te maken hebt. 
 --       - Definieer met `where` een subset van `inputs` die tot een levende danwel dode cel leiden.
 rule :: Int -> Rule
-rule n input = undefined
+rule n input
+        | input `elem` mask (binary n) inputs = Alive
+        | otherwise = Dead
 
 {- Je kunt je rule-functie in GHCi testen met variaties op het volgende commando:
 
@@ -376,6 +378,9 @@ rule n input = undefined
     ▓░░░▓░░░▓░░░▓░░░▓░░░▓░░░▓░░░▓
    ▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓░▓
 
-   Als het goed is zal `stack run` nu ook werken met de optie (d) uit het menu; 
+   Als het goed is zal `stack run` nu ook werken met de optie (d) uit het menu;
    experimenteer met verschillende parameters en zie of dit werkt.
 -}
+
+
+
