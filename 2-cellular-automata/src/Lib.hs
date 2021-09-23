@@ -258,7 +258,7 @@ safeHead x y = head y
 
 {-| The 'takeAtLeast' function returns the first x elements of a list as a list, if the length of the list is smaller than x
 then it appends x - list.length default values.
-we do this by adding together two lists, one for the x values of the list, and one, using the replicate function, for
+it does this by adding together two lists, one for the x values of the list, and one, using the replicate function, for
 the x - list.length default values
 it takes 3 arguments, of types 'Int', 'a', '[a]'. It returns type '[a]' -}
 takeAtLeast :: Int   -- ^ Aantal items om te pakken
@@ -384,7 +384,7 @@ binary = map toEnum . reverse . take 8 . (++ repeat 0)
 -- Je kunt hiervoor zipWith en Maybe gebruiken (check `catMaybes` in Data.Maybe) of de recursie met de hand uitvoeren.
 
 {-| The 'mask' function compares compares a list of booleans to a list of other values, and only returns the other values with the same
-index as True in the boolean list. We do this by using recursion to loop through the lists, and then prepending the values to a new list
+index as True in the boolean list. It does this by using recursion to loop through the lists, and then prepending the values to a new list
 if x = True.
 it takes 2 arguments, of types '[Bool]', '[a]'. It returns type '[a]' -}
 mask :: [Bool] -> [a] -> [a]
@@ -398,10 +398,10 @@ mask _ _ = []
 --       - Definieer met `where` een subset van `inputs` die tot een levende danwel dode cel leiden.
 
 {-| The 'rule' function returns the new state of the input based on any valid rule n
-we use mask to get a list of inputs based on rule n, that result in Alive
-we then check if the input is an element of that list
-if it is: we return Alive
-if it isn't: we return Dead
+is uses mask to get a list of inputs based on rule n, that result in Alive
+is then checks if the input is an element of that list
+if it is: it returns Alive
+if it isn't: it returns Dead
 it takes 1 argument, of type 'Int'. It returns type 'Rule' -}
 rule :: Int -> Rule
 rule n input
