@@ -367,8 +367,7 @@ guard :: (a -> Bool) -> a -> Maybe a
 guard p x | p x = Just x
           | otherwise = Nothing
 
--- TODO: Voorzie de functie `binary` van uitgebreid commentaar.
--- Leg in dit commentaar uit: 
+-- Leg in dit commentaar uit:
 -- 1) Wat de functie precies doet;
 -- 2) Stap voor stap, hoe de functie dat doel bereikt.
 -- Tips: - Zoek de definitie van `unfoldr` op met Hoogle. 
