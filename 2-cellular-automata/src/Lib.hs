@@ -52,21 +52,17 @@ stringVoorbeeld :: FocusList String
 stringVoorbeeld = FocusList ["3","4","5"] ["2","1","0"]
 
 
--- TODO: Schrijf en documenteer de functie toList, die een focus-list omzet in een gewone lijst. 
--- Het resultaat bevat geen focus-informatie meer, maar moet wel op de juiste volgorde staan.
--- Voorbeeld: toList intVoorbeeld ~> [0,1,2,3,4,5]
-
-{-| The 'toList function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'a'. It returns type '[a]' -}
+{-| The 'toList function converts a FocusList to a regular list by taking the two sublists of the FocusList,
+reversing the second one, and appending them.
+it takes 1 argument, of type 'FocusList a'. It returns type '[a]' -}
 toList :: FocusList a -> [a]
 toList FocusList {forward = x, backward = y} = reverse y  ++  x
 
 
--- TODO: Schrijf en documenteer de functie fromList, die een gewone lijst omzet in een focus-list. 
--- Omdat een gewone lijst geen focus heeft moeten we deze kiezen; dit is altijd het eerste element.
 
-{-| The 'fromList' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type '[a]'. It returns type 'FocusList a' -}
+{-| The 'fromList' function converts a regular list to a FocusList (the first element of the regular list is the focus)
+by taking the regular list as the forward part of the FocusList and adding an empty list for the backward part
+it takes 1 argument, of type '[a]'. It returns type 'FocusList a' -}
 fromList :: [a] -> FocusList a
 fromList x = FocusList x []
 
@@ -75,24 +71,27 @@ fromList x = FocusList x []
 goLeft :: FocusList a -> FocusList a
 goLeft (FocusList x (y:ys)) = FocusList (y:x) ys
 
--- TODO: Schrijf en documenteer de functie goRight, die de focuslist een plaats naar rechts opschuift.
 
-{-| The 'goRight' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
+{-| The 'goRight' function moves the FocusList one spot to the right
+by splitting the forward list of the FocusList in a head and tail, and then returning a FocusList with the tail as the
+forward list and the head, prepended to the original backward list, as the new backward list
+it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
 goRight :: FocusList a -> FocusList a
 goRight (FocusList (x:xs) y) = FocusList xs (x:y)
 
--- TODO: Schrijf en documenteer de functie leftMost, die de focus helemaal naar links opschuift.
 
-{-| The 'leftMost' function calculates the sum of a list of integers using a recursive loop
+{-| The 'leftMost' function moves the focus all the way to the left
+by reversing the backward part of the focus list, appending that to the forward part, and returning that as the new
+forward part, with an empty list as the backward part
  it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
 leftMost :: FocusList a -> FocusList a
 leftMost (FocusList x y) = FocusList ((reverse y) ++ x) []
 
--- TODO: Schrijf en documenteer de functie rightMost, die de focus helemaal naar rechts opschuift.
 
-{-| The 'rightMost' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
+{-| The 'rightMost' function moves the focus all the way to the right
+by taking the last element of the forward list as the new forward list
+and the reverse of the init of the original forward list prepended to the original backward list as the new backward list
+it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
 rightMost :: FocusList a -> FocusList a
 rightMost (FocusList x y) = FocusList [last x] ((reverse $ init x)++y)
 
@@ -112,22 +111,24 @@ rightMost (FocusList x y) = FocusList [last x] ((reverse $ init x)++y)
 
 -- Grafisch voorbeeld: [⟨░⟩, ▓, ▓, ▓, ▓, ░]  ⤚totalLeft→ [⟨░⟩, ░, ▓, ▓, ▓, ▓, ░]
 
--- TODO: Schrijf en documenteer de functie totalLeft, zoals hierboven beschreven.
 
-{-| The 'totalLeft' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
+{-| The 'totalLeft' moves the focus list to the left, if there are no more cells to the left, add one
+if the backward part of the FocusList is empty, then it prepends an empty cell to the forward part of the new FocusList
+it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
 totalLeft :: (Eq a, Monoid a) => FocusList a -> FocusList a
-totalLeft (FocusList x (y:ys)) = FocusList (y:x) ys
 totalLeft (FocusList x []) = FocusList (mempty:x) []
+totalLeft x = goLeft x
 
 
--- TODO: Schrijf en documenteer de functie totalRight, zoals hierboven beschreven.
 
-{-| The 'totalRight' function calculates the sum of a list of integers using a recursive loop
+{-| The 'totalRight' moves the focus list to the right, if there are no more cells to the right, add one
+if the forward part of the FocusList is empty, then it prepends an empty cell to the backward part of the new FocusList
  it takes 1 argument, of type 'FocusList a'. It returns type 'FocusList a' -}
 totalRight :: (Eq a, Monoid a) => FocusList a -> FocusList a
 totalRight (FocusList (x:xs:xss) y) = FocusList (xs:xss) (x:y)
 totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
+
+
 
 --Alternative:
 --totalRight (FocusList (x:xs) y) = if (length xs) == 0 then FocusList [mempty] (x:y) else FocusList xs (x:y)
@@ -137,16 +138,15 @@ totalRight (FocusList (x:xs) y) = FocusList [mempty] (x:y)
 -- In de colleges hebben we kennis gemaakt met een aantal hogere-orde functies zoals `map`, `zipWith` en `fold[r/l]`. 
 -- Hier stellen we equivalente functies voor de FocusList op.
 
--- TODO: Schrijf en documenteer de functie mapFocusList.
--- Deze werkt zoals je zou verwachten: de functie wordt op ieder element toegepast, voor, op en na de focus. 
+-- Deze werkt zoals je zou verwachten: de functie wordt op ieder element toegepast, voor, op en na de focus.
 -- Je mag hier gewoon map voor gebruiken.
 
-{-| The 'mapFocusList' function calculates the sum of a list of integers using a recursive loop
- it takes 2 arguments, of types '(a -> b)', 'FocusList a'. It returns type 'FocusList b' -}
+{-| The 'mapFocusList' function applies a function of choice on every value of the a FocusList
+by using the map function on the forward and backwards parts of the FocusList
+it takes 2 arguments, of types '(a -> b)', 'FocusList a'. It returns type 'FocusList b' -}
 mapFocusList :: (a -> b) -> FocusList a -> FocusList b
 mapFocusList f (FocusList x y) = FocusList (map f x) (map f y)
 
--- TODO: Schrijf en documenteer de functie zipFocusListWith.
 -- Deze functie zorgt ervoor dat ieder paar elementen uit de FocusLists als volgt met elkaar gecombineerd wordt:
 
 -- [1, 2, ⟨3⟩,  4, 5]        invoer 1
@@ -160,13 +160,13 @@ mapFocusList f (FocusList x y) = FocusList (map f x) (map f y)
 -- Dit laatste is net als bij de gewone zipWith, die je hier ook voor mag gebruiken.
 
 
-{-| The 'zipFocusListWith' function calculates the sum of a list of integers using a recursive loop
- it takes 3 arguments, of types '(a -> b -> c)', 'FocusList a', 'FocusList b'. It returns type 'FocusList c' -}
+{-| The 'zipFocusListWith' function uses a function of choice to combine two FocusLists
+by using the zipWith function on the forward and backward parts of both FocusList and returning those results as a new Focuslist
+it takes 3 arguments, of types '(a -> b -> c)', 'FocusList a', 'FocusList b'. It returns type 'FocusList c' -}
 zipFocusListWith :: (a -> b -> c) -> FocusList a -> FocusList b -> FocusList c
 zipFocusListWith f (FocusList x y) (FocusList q z) = FocusList (zipWith f x q) (zipWith f y z)
 
--- TODO: Schrijf en documenteer de functie foldFocusList.
--- Het folden van een FocusList vergt de meeste toelichting: waar we met een normale lijst met een left fold en een 
+-- Het folden van een FocusList vergt de meeste toelichting: waar we met een normale lijst met een left fold en een
 -- right fold te maken hebben, folden we hier vanuit de focus naar buiten.
 -- Vanuit de focus worden de elementen van rechts steeds gecombineerd tot een nieuw element, 
 -- vanuit het element voor de focus gebeurt hetzelfde vanuit links. 
@@ -187,10 +187,13 @@ zipFocusListWith f (FocusList x y) (FocusList q z) = FocusList (zipWith f x q) (
 -- Let op: de tweede lijst van de FocusList kan leeg zijn! (De eerste technisch gezien ook, maar dan heb je geen geldige FocusList.)
 
 
-{-| The foldFocusList function calculates the sum of a list of integers using a recursive loop
- it takes 2 arguments, of type '(a -> a -> a)', 'FocusList a'. It returns type 'a' -}
+{-| The foldFocusList function does what the foldl1 function does but applies it to FocusLists
+if one of the FocusList sublists is empty it only folds the other, otherwise it applies the function of choice to the result
+of the folds of the forward and backword sublists
+it takes 2 arguments, of type '(a -> a -> a)', 'FocusList a'. It returns type 'a' -}
 foldFocusList :: (a -> a -> a) -> FocusList a -> a
 foldFocusList f (FocusList x []) = (foldl1 f x)
+foldFocusList f (FocusList [] y) = (foldl1 f y)
 foldFocusList f (FocusList x y) = f (foldl1 f y) (foldl1 f x)
 
 -- Testfunctie voor foldFocusList (geeft True als alles klopt, False als er één of meer niet kloppen)
@@ -238,10 +241,9 @@ type Rule = Context -> Cell
 
 -- ..:: Sectie 3: Rule30 en helperfuncties ::..
 
--- TODO: Schrijf en documenteer de functie safeHead, die het eerste item van een lijst geeft; 
 -- als de lijst leeg is, wordt een meegegeven defaultwaarde teruggegeven.
 
-{-| The 'safeHead' function calculates the sum of a list of integers using a recursive loop
+{-| The 'safeHead' function returns the first value of a list, if the list is empty is returns a default value instead.
  it takes 2 arguments, of types 'a', '[a]'. It returns type 'a' -}
 safeHead :: a        -- ^ Defaultwaarde
          -> [a]      -- ^ Bronlijst
@@ -249,42 +251,43 @@ safeHead :: a        -- ^ Defaultwaarde
 safeHead x []  = x
 safeHead x y = head y
 
--- TODO: Schrijf en documenteer de functie takeAtLeast, die werkt als `take`, maar met een extra argument. 
 -- Als de lijst lang genoeg is werkt de functie hetzelfde als `take` en worden de eerste `n` elementen teruggegeven.
 -- Zo niet, dan worden zoveel mogelijk elementen teruggegeven, en wordt daarna tot aangevuld met de meegegeven defaultwaarde.
 -- Voorbeelden: takeAtLeast 4 0 [1,2,3,4,5] ~> [1,2,3,4]
 --              takeAtLeast 4 0 [1,2]       ~> [1,2,0,0]
 
-{-| The 'takeAtLeast' function calculates the sum of a list of integers using a recursive loop
- it takes 2 arguments, of types 'a', '[a]'. It returns type '[a]' -}
+{-| The 'takeAtLeast' function returns the first x elements of a list as a list, if the length of the list is smaller than x
+then it appends x - list.length default values.
+we do this by adding together two lists, one for the x values of the list, and one, using the replicate function, for
+the x - list.length default values
+it takes 3 arguments, of types 'Int', 'a', '[a]'. It returns type '[a]' -}
 takeAtLeast :: Int   -- ^ Aantal items om te pakken
             -> a     -- ^ Defaultwaarde
             -> [a]   -- ^ Bronlijst
             -> [a]
 takeAtLeast x y z = (take x z) ++ replicate (x - length z) y
 
--- TODO: Schrijf en documenteer de functie context, die met behulp van takeAtLeast de context van de focus-cel in een Automaton teruggeeft. 
 -- Niet-gedefinieerde cellen zijn per definitie Dead.
 
-{-| The 'context' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'Automaton'. It returns type 'Context' -}
+{-| The 'context' function returns the context of a focus-cel in an Automaton
+by using the takeAtLeast function on both parts of the FocusList and appending them
+it takes 1 argument, of type 'Automaton'. It returns type 'Context' -}
 context :: Automaton -> Context
 context (FocusList x y) = takeAtLeast 1 Dead y ++ takeAtLeast 2 Dead x
 
 
--- TODO: Schrijf en documenteer de functie expand die een Automaton uitbreidt met een dode cel aan beide uiteindes. 
 -- We doen voor deze simulatie de aanname dat de "known universe" iedere ronde met 1 uitbreidt naar zowel links als rechts.
 
-{-| The 'expand' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'Automaton'. It returns type 'Automaton' -}
+{-| The 'expand' function returns an Automaton expanded by dead cells at both sides
+by appending a Dead cell list of length one to both parts of the FocusList
+it takes 1 argument, of type 'Automaton'. It returns type 'Automaton' -}
 expand :: Automaton -> Automaton
 expand (FocusList x y) = FocusList (x++[Dead]) (y++[Dead])
 
--- TODO: Vul de functie rule30 aan met de andere 7 gevallen. 
 -- Voor bonuspunten: doe dit in zo min mogelijk regels code. De underscore _ is je vriend.
 
 
-{-| The 'rule30' function calculates the sum of a list of integers using a recursive loop
+{-| The 'rule30' function returns a cell depending on the list of cells input based on rule30
  it takes 1 argument, of type '[Cell]'. It returns type 'Cell' -}
 rule30 :: [Cell] -> Cell
 rule30 [Alive, Dead, Dead] = Alive
@@ -352,10 +355,9 @@ showPyramid zs = unlines $ zipWith showFocusList zs $ reverse [0..div (pred w) 2
 -- De toestand van een cel hangt af van de toestand van 3 cellen in de vorige ronde: de cel zelf en diens beide buren (de context). 
 -- Afhankelijk van het nummer dat een regel heeft, mapt iedere combinatie naar een levende of dode cel.
 
--- TODO: Definieer de constante `inputs` die alle 8 mogelijke contexts weergeeft: [Alive,Alive,Alive], [Alive,Alive,Dead], etc.
 -- Je mag dit met de hand uitschrijven, maar voor meer punten kun je ook een lijst-comprehensie of andere slimme functie verzinnen.
 
-{-| The 'inputs' function calculates the sum of a list of integers using a recursive loop
+{-| The 'inputs' function returns a list of all possible contexts by using a list comprehension
  it takes 0 arguments. It returns type [Context] -}
 inputs :: [Context]
 inputs = [[x,y,z] | x <- [Alive,Dead], y <- [Alive,Dead], z <- [Alive,Dead]]
@@ -372,31 +374,35 @@ guard p x | p x = Just x
 -- Tips: - Zoek de definitie van `unfoldr` op met Hoogle. 
 --       - `toEnum` converteert een Int naar een ander type, in dit geval 0 -> False en 1 -> True voor Bool.
 
-{-| The 'binary' function calculates the sum of a list of integers using a recursive loop
+{-| The 'binary' function converts an Int to a list of 8 bools representing a number in the binary system
  it takes 1 argument, of type 'Int'. It returns type '[Bool]' -}
 binary :: Int -> [Bool]
 binary = map toEnum . reverse . take 8 . (++ repeat 0)
        . unfoldr (guard (/= (0,0)) . swap . flip divMod 2)
 
--- TODO: Schrijf en documenteer de functie mask, die gegeven een lijst Booleans en een lijst elementen alleen de elementen laat staan 
 -- die (qua positie) overeenkomen met een True.
 -- Je kunt hiervoor zipWith en Maybe gebruiken (check `catMaybes` in Data.Maybe) of de recursie met de hand uitvoeren.
 
-{-| The 'mask' function calculates the sum of a list of integers using a recursive loop
- it takes 2 arguments, of types '[Bool]', 'a'. It returns type '[a]' -}
+{-| The 'mask' function compares compares a list of booleans to a list of other values, and only returns the other values with the same
+index as True in the boolean list. We do this by using recursion to loop through the lists, and then prepending the values to a new list
+if x = True.
+it takes 2 arguments, of types '[Bool]', '[a]'. It returns type '[a]' -}
 mask :: [Bool] -> [a] -> [a]
-mask (x:xs) (y:ys) = if fromEnum x == 1 then y: mask xs ys else mask xs ys
+mask (x:xs) (y:ys) = if x then y: mask xs ys else mask xs ys
 mask _ _ = []
 
 
--- TODO: Schrijf en documenteer de functie rule, die elk getal kan omzetten naar de bijbehorende regel.
 -- De Int staat hierbij voor het nummer van de regel; de Context `input` is waarnaar je kijkt om te zien of het resultaat
 -- met de gevraagde regel Dead or Alive is. 
 -- Tips: - Denk eraan dat het type Rule een shorthand is voor een functie-type, dus dat je met 2 argumenten te maken hebt. 
 --       - Definieer met `where` een subset van `inputs` die tot een levende danwel dode cel leiden.
 
-{-| The 'rule' function calculates the sum of a list of integers using a recursive loop
- it takes 1 argument, of type 'Int'. It returns type 'Rule' -}
+{-| The 'rule' function returns the new state of any valid rule n
+we use mask to get a list of inputs based on rule n, that result in Alive
+we then check if the input is an element of that list
+if it is: we return Alive
+if it isn't: we return Dead
+it takes 1 argument, of type 'Int'. It returns type 'Rule' -}
 rule :: Int -> Rule
 rule n input
         | input `elem` mask (binary n) inputs = Alive
