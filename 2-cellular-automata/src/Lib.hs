@@ -375,7 +375,8 @@ guard p x | p x = Just x
 --       - `toEnum` converteert een Int naar een ander type, in dit geval 0 -> False en 1 -> True voor Bool.
 
 {-| The 'binary' function converts an Int to a list of 8 bools representing a number in the binary system
- it takes 1 argument, of type 'Int'. It returns type '[Bool]' -}
+the first line creates a list of 8 zeroes and casts it to bools
+it takes 1 argument, of type 'Int'. It returns type '[Bool]' -}
 binary :: Int -> [Bool]
 binary = map toEnum . reverse . take 8 . (++ repeat 0)
        . unfoldr (guard (/= (0,0)) . swap . flip divMod 2)
