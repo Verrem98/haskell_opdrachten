@@ -397,7 +397,7 @@ mask _ _ = []
 -- Tips: - Denk eraan dat het type Rule een shorthand is voor een functie-type, dus dat je met 2 argumenten te maken hebt. 
 --       - Definieer met `where` een subset van `inputs` die tot een levende danwel dode cel leiden.
 
-{-| The 'rule' function returns the new state of any valid rule n
+{-| The 'rule' function returns the new state of the input based on any valid rule n
 we use mask to get a list of inputs based on rule n, that result in Alive
 we then check if the input is an element of that list
 if it is: we return Alive
