@@ -161,15 +161,22 @@ getAverageValues (x:xs:xss) = (x+xs)/2: getAverageValues (xs:xss)
 -- Met deze functies kunnen we alle mogelijke CSplits bepalen voor één gegeven feature.
 -- Voorbeeld: een dataset met in feature 2 de waarden [9.0, 2.0, 5.0, 3.0] wordt
 --            [CSplit 2 2.5, CSplit 2 4.0, CSplit 7.0].
--- TODO: schrijf de functie getFeatureSplits, die alle mogelijke CSplits bepaalt voor een gegeven feature.
+
+{-| The 'getFeatureSplits' function returns all possible CSplits for a specific feature for a specific database
+by iterating through a list of sorted getAverageFeatures and adding the features and averageValues together
+to create a list of CSplits
+it takes 2 argument, of types 'Int', 'CDataset'. It returns type '[CSplit]' -}
 getFeatureSplits :: Int -> CDataset -> [CSplit]
 getFeatureSplits x y = map (\i -> CSplit (x) (i)) (getAverageValues (getUniqueValuesSorted (getFeature x y)))
 
 -- Door getFeatureSplits toe te passen voor alle mogelijke features, kunnen we alle mogelijke CSplits bepalen.
--- TODO: schrijf de functie getAllFeatureSplits, die alle mogelijke CSplits van een dataset bepaalt.
+
+{-| The 'getAllFeatureSplits' function returns all possible CSplits of a specific dataset
+by iterating through a list of [0.. (length properties)-1] calling the getFeatureSplits function on every element
+in the list and the CDataset and putting those in a list
+it takes 1 argument, of type 'CDataset'. It returns type '[CSplit]' -}
 getAllFeatureSplits :: CDataset -> [CSplit]
 getAllFeatureSplits x = concat (map (\i -> getFeatureSplits i x)[0..(length (properties (head x))-1)])
-
 
 
 -- ..:: Sectie 3 - Het vinden van de beste splitsing ::..
@@ -182,7 +189,11 @@ getAllFeatureSplits x = concat (map (\i -> getFeatureSplits i x)[0..(length (pro
 -- kleiner-gelijk-aan is aan de splitswaarde, en False als deze groter is dan de splitswaarde.
 -- Voorbeelden: gegeven CSplit 1 3.0 en CRecord [4.0, 2.0, 9.0] "x", is het resultaat True.
 --              gegeven CSplit 1 1.0 en CRecord [4.0, 2.0, 9.0] "x", is het resultaat False.
--- TODO: schrijf de functie splitSingleRecord, die voor een enkel CRecord True of False teruggeeft.
+
+
+{-| The 'splitSingleRecord' function returns True or False by comparing a CSplit to a CRecord
+by checking if the xth index of the CRecord properties <= the value of the CSplit
+it takes 2 argument, of types 'CSplit', 'CRecord'. It returns type 'bool' -}
 splitSingleRecord :: CSplit -> CRecord -> Bool
 splitSingleRecord (CSplit x y) (CRecord i _)
                 | i!!x <= y = True
@@ -206,8 +217,13 @@ splitOnFeature x y = (boolRecordSplitter (zip (map (\i -> (splitSingleRecord y i
 -}
 
 -- Nu kunnen we de functie schrijven die één dataset x  opsplitst in twee, op basis van een CSplit object.
--- TODO: schrijf de functie splitOnFeature, die één dataset opsplitst in twee.
 -- HINT: gebruik een functie uit de Prelude. Onthoud dat CDataset = [CRecord]!
+
+
+{-| The 'splitOnFeature' function splits a dataset in two
+by using the filter function in combination with the (not) splitSingleRecord function to decide
+which CRecords should be copied to the new datasets
+it takes 2 argument, of types 'CDataset','CSplit'. It returns type '(CDataset, CDataset)' -}
 splitOnFeature :: CDataset -> CSplit -> (CDataset, CDataset)
 splitOnFeature x y =  (filter (splitSingleRecord y) x, filter (not . splitSingleRecord y) x)
 
@@ -215,7 +231,12 @@ splitOnFeature x y =  (filter (splitSingleRecord y) x, filter (not . splitSingle
 --     1) alle splitsingen genereren voor een CDataset, met behulp van Sectie 2;
 --     2) de datasets die resulteren bij elk van die splitsingen genereren.
 -- Wel is het van belang dat we onthouden welke splitsing bij welke twee datasets hoort.
--- TODO: schrijf de functie generateAllSplits, die voor een gegeven dataset alle mogelijke splitsingen "uitprobeert".
+
+
+{-| The 'generateAllSplits' function creates a list of all possible splits combined in a tuple with the split datasets
+by using an anonymous function to iterate through getAllFeatureSplits of the dataset
+and then creating a list of tuples of: (the split, the first half of the split dataset, the second half of the split dataset)
+it takes 1 argument, of type 'CDataset'. It returns type '[(CSplit, CDataset, CDataset)]' -}
 generateAllSplits :: CDataset -> [(CSplit, CDataset, CDataset)]
 generateAllSplits x = (map (\i -> (i, fst (splitOnFeature x i) ,snd (splitOnFeature x i))) (getAllFeatureSplits x))
 
@@ -223,16 +244,27 @@ generateAllSplits x = (map (\i -> (i, fst (splitOnFeature x i) ,snd (splitOnFeat
 --     1) Genereer alle mogelijke splits;
 --     2) Bepaal welke van deze splitsingen het beste resultaat geeft - oftewel, de laagste Gini impurity.
 -- Hierbij willen we graag zowel de Gini impurity als de splitsing zelf onthouden.
--- TODO: schrijf de functie findBestSplit, die voor een dataset de best mogelijke splitsing vindt.
 -- HINT: gebruik een functie uit de Prelude. Hoe werkt "kleiner dan" voor tupels?
 
+{-| The 'assignGini' function assigns a gini value to every element in [(CSplit, CDataset, CDataset)] it only returns a list of
+the gini values and the CSplits
+by using pattern matching to get all elements of a 3-element-long tuple and using recursion to calculate the gini impurity
+of every tuple
+it takes 1 argument, of type '[(CSplit, CDataset, CDataset)]'. It returns type '[(Float, CSplit)]' -}
 assignGini :: [(CSplit, CDataset, CDataset)] ->  [(Float,CSplit)]
 assignGini [] = []
 assignGini ((x,xs,xss):y) = (giniAfterSplit xs xss,x) : assignGini y
 
+
+{-| The 'returnLowestGini' function returns the lowest gini impurity CSplit combination
+by using the sortBy function to sort the list of tuples on the fst element (gini impurity) and returning the first tuple
+it takes 1 argument, of type '[(Float,CSplit)]'. It returns type '(Float, CSplit)' -}
 returnLowestGini :: [(Float,CSplit)] -> (Float,CSplit)
 returnLowestGini x =  head (sortBy (compare `on` fst) x)
 
+{-| The 'findBestSplit' function returns the gini impurity and CSplit of the split of the dataset with the lowest gini impurity
+by using the assignGini and returnLowestGini functions
+it takes 1 argument, of type 'CDataset'. It returns type '(Float, CSplit)' -}
 findBestSplit :: CDataset -> (Float, CSplit)
 findBestSplit x = returnLowestGini(assignGini (generateAllSplits x))
 
@@ -257,12 +289,33 @@ data DTree = Branch CSplit DTree DTree | Leaf String deriving (Show, Eq, Ord)
 --     ZO NIET,
 --         DAN geef ik een Branch terug met daarin de best mogelijke splitsing
 --         en de decision trees (sub-bomen) op basis van de twee datasets na die splitsing.
--- TODO: schrijf de functie buildDecisionTree.
-buildDecisionTree :: CDataset -> DTree
-buildDecisionTree = undefined
 
--- Tot slot, bij het voorspellen weten we alleen de eigenschappen ([Float]), niet het label.
--- TODO: schrijf de functie predict, die op basis van een boom en de gegeven eigenschappen het label voorspelt.
+{-| The 'buildDecisionTree' function crates a decision tree based on a specific dataset
+by using recursion and checking for 2 conditions:
+1. is the gini impurity of the dataset 0 OR is the gini impurity of the dataset smaller than the gini impurity of the best split of the dataset
+2. otherwise
+if 1 add a leaf to the tree consisting of the most frequent label in the dataset,
+if 2 add a branch to the tree consisting of the best split, and the dataset split into two, on the best split, recursively called until condition 1 has been met
+it takes 1 argument, of type 'CDataset'. It returns type 'DTree' -}
+buildDecisionTree :: CDataset -> DTree
+buildDecisionTree x
+                  | gini x == 0 || gini x <= (fst (findBestSplit x)) = Leaf (mostFrequentLabel x)
+                  | otherwise = Branch bs (buildDecisionTree(fst spdat)) (buildDecisionTree(snd spdat))
+                  where spdat = splitOnFeature x bs
+                        bs = snd(findBestSplit x)
+
+
+{-| The 'predict' function returns a predicted label  based on a specific decision tree and a specific list of properties
+by using recursing and checking for 2 conditions:
+1. is the decision tree just a leaf? return the label of the leaf
+2. is the decision tree a branch?
+   2a. is the branch splittable with the properties i and CSplit x? return the first sub-branch (or leaf) of the checked branch
+   2b. otherwise? return the second sub-branch (or leaf) of the checked branch
+it takes 2 arguments, of type 'DTree', '[Float]'. It returns type String -}
 predict :: DTree -> [Float] -> String
-predict = undefined
+predict (Leaf x) _ = x
+predict (Branch x y z) i
+                       | splitSingleRecord x (CRecord i "") = predict y i
+                       | otherwise = predict z i
+
 
