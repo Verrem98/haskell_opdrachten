@@ -155,7 +155,7 @@ it takes 1 argument, of type 'CDataset'. It returns type '[(CSplit, CDataset, CD
 generateAllSplits :: CDataset -> [(CSplit, CDataset, CDataset)]
 generateAllSplits x = (map (\i -> (i, fst (splitOnFeature x i) ,snd (splitOnFeature x i))) (getAllFeatureSplits x))
 
-{-| The 'assignGini' function assigns a gini value to every element in [(CSplit, CDataset, CDataset)] it only returns a list of
+{-| The 'assignGini' function assigns a gini value to every tuple in [(CSplit, CDataset, CDataset)] it only returns a list of
 the gini values and the CSplits
 by using pattern matching to get all elements of a 3-element-long tuple and using recursion to calculate the gini impurity
 of every tuple
