@@ -16,8 +16,11 @@
 
 module Lib where
 
-import Data.List (group, sort, sortOn, sortBy, nub)
-import Data.Tuple (swap)
+import Data.List (group, sort,sortBy, nub, elemIndex )
+import Data.Tuple
+import Data.Function (on)
+
+
 
 -- Allereerst definiëren we een datatype voor één enkele rij uit onze traindataset. (CRecord, voor Classification Record.)
 -- Een rij uit onze dataset bestaat uit 
@@ -149,7 +152,7 @@ getUniqueValuesSorted x = sort (nub x)
 
 
 {-| The 'getAverageValues' function returns a list of the means of all consecutive pairs of values in a list,
-by using recursion to loop through the list and prepending the calculated means of every pair of values
+by using recursion to loop through the list and prepending the means of every pair of values to a new list
 it takes 1 argument, of type '[Float]'. It returns type '[Float]' -}
 getAverageValues :: [Float] -> [Float]
 getAverageValues [x] = []
@@ -165,7 +168,8 @@ getFeatureSplits x y = map (\i -> CSplit (x) (i)) (getAverageValues (getUniqueVa
 -- Door getFeatureSplits toe te passen voor alle mogelijke features, kunnen we alle mogelijke CSplits bepalen.
 -- TODO: schrijf de functie getAllFeatureSplits, die alle mogelijke CSplits van een dataset bepaalt.
 getAllFeatureSplits :: CDataset -> [CSplit]
-getAllFeatureSplits x = getFeatureSplits 0 x ++ getFeatureSplits 1 x
+getAllFeatureSplits x = concat (map (\i -> getFeatureSplits i x)[0..(length (properties (head x))-1)])
+
 
 
 -- ..:: Sectie 3 - Het vinden van de beste splitsing ::..
@@ -180,15 +184,32 @@ getAllFeatureSplits x = getFeatureSplits 0 x ++ getFeatureSplits 1 x
 --              gegeven CSplit 1 1.0 en CRecord [4.0, 2.0, 9.0] "x", is het resultaat False.
 -- TODO: schrijf de functie splitSingleRecord, die voor een enkel CRecord True of False teruggeeft.
 splitSingleRecord :: CSplit -> CRecord -> Bool
-splitSingleRecord (CSplit x y) (CRecord i j)
+splitSingleRecord (CSplit x y) (CRecord i _)
                 | i!!x <= y = True
                 | otherwise = False
 
--- Nu kunnen we de functie schrijven die één dataset opsplitst in twee, op basis van een CSplit object.
+
+{-
+
+My old, extremely jank, way of solving splitOnFeature:
+
+boolRecordSplitter :: [(Bool, CRecord)] -> Bool -> [CRecord]
+boolRecordSplitter [] _ = []
+boolRecordSplitter ((i,j):xs) y
+           | i == y = j : boolRecordSplitter xs y
+           | otherwise = boolRecordSplitter xs y
+
+splitOnFeature :: CDataset -> CSplit -> (CDataset, CDataset)
+splitOnFeature x y = (boolRecordSplitter (zip (map (\i -> (splitSingleRecord y i) ) x) x) True, boolRecordSplitter (zip (map (\i -> (splitSingleRecord y i) ) x) x) False)
+
+
+-}
+
+-- Nu kunnen we de functie schrijven die één dataset x  opsplitst in twee, op basis van een CSplit object.
 -- TODO: schrijf de functie splitOnFeature, die één dataset opsplitst in twee.
 -- HINT: gebruik een functie uit de Prelude. Onthoud dat CDataset = [CRecord]!
 splitOnFeature :: CDataset -> CSplit -> (CDataset, CDataset)
-splitOnFeature = undefined
+splitOnFeature x y =  (filter (splitSingleRecord y) x, filter (not . splitSingleRecord y) x)
 
 -- Nu kunnen we:
 --     1) alle splitsingen genereren voor een CDataset, met behulp van Sectie 2;
@@ -196,7 +217,7 @@ splitOnFeature = undefined
 -- Wel is het van belang dat we onthouden welke splitsing bij welke twee datasets hoort.
 -- TODO: schrijf de functie generateAllSplits, die voor een gegeven dataset alle mogelijke splitsingen "uitprobeert".
 generateAllSplits :: CDataset -> [(CSplit, CDataset, CDataset)]
-generateAllSplits = undefined
+generateAllSplits x = (map (\i -> (i, fst (splitOnFeature x i) ,snd (splitOnFeature x i))) (getAllFeatureSplits x))
 
 -- De laatste stap van deze sectie combineert Sectie 1 en Sectie 3:
 --     1) Genereer alle mogelijke splits;
@@ -204,8 +225,16 @@ generateAllSplits = undefined
 -- Hierbij willen we graag zowel de Gini impurity als de splitsing zelf onthouden.
 -- TODO: schrijf de functie findBestSplit, die voor een dataset de best mogelijke splitsing vindt.
 -- HINT: gebruik een functie uit de Prelude. Hoe werkt "kleiner dan" voor tupels?
+
+assignGini :: [(CSplit, CDataset, CDataset)] ->  [(Float,CSplit)]
+assignGini [] = []
+assignGini ((x,xs,xss):y) = (giniAfterSplit xs xss,x) : assignGini y
+
+returnLowestGini :: [(Float,CSplit)] -> (Float,CSplit)
+returnLowestGini x =  head (sortBy (compare `on` fst) x)
+
 findBestSplit :: CDataset -> (Float, CSplit)
-findBestSplit = undefined
+findBestSplit x = returnLowestGini(assignGini (generateAllSplits x))
 
 
 -- ..:: Sectie 4 - Genereren van de decision tree en voorspellen ::..

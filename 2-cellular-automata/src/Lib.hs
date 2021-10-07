@@ -187,7 +187,7 @@ zipFocusListWith f (FocusList x y) (FocusList q z) = FocusList (zipWith f x q) (
 -- Let op: de tweede lijst van de FocusList kan leeg zijn! (De eerste technisch gezien ook, maar dan heb je geen geldige FocusList.)
 
 
-{-| The foldFocusList function does what the foldl1 function does but applies it to FocusLists
+{-| The 'foldFocusList' function does what the foldl1 function does but applies it to FocusLists
 if one of the FocusList sublists is empty it only folds the other, otherwise it applies the function of choice to the result
 of the folds of the forward and backword sublists
 it takes 2 arguments, of type '(a -> a -> a)', 'FocusList a'. It returns type 'a' -}
