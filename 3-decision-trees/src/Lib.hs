@@ -180,7 +180,7 @@ findBestSplit x = returnLowestGini(assignGini (generateAllSplits x))
 
 data DTree = Branch CSplit DTree DTree | Leaf String deriving (Show, Eq, Ord)
 
--
+
 {-| The 'buildDecisionTree' function crates a decision tree based on a specific dataset
 by using recursion and checking for 2 conditions:
 1. is the gini impurity of the dataset 0 OR is the gini impurity of the dataset smaller than the gini impurity of the best split of the dataset
