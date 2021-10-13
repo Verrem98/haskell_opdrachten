@@ -192,8 +192,8 @@ buildDecisionTree :: CDataset -> DTree
 buildDecisionTree x
                   | gini x == 0 || gini x <= (fst (findBestSplit x)) = Leaf (mostFrequentLabel x)
                   | otherwise = Branch f (buildDecisionTree(fst s)) (buildDecisionTree(snd s))
-                  where s = splitOnFeature x f
-                        f = snd(findBestSplit x)
+                   where s = splitOnFeature x f
+                         f = snd(findBestSplit x)
 
 
 {-| The 'predict' function returns a predicted label  based on a specific decision tree and a specific list of properties
